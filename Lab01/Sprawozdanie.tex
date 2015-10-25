@@ -37,8 +37,12 @@
 \usepackage[utf8x]{inputenc}
 \usepackage{amsmath}
 \usepackage{graphicx}
+\usepackage{listings}
+\usepackage{framed}
 \usepackage[colorinlistoftodos]{todonotes}
-
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{hyperref}
 \begin{document}
 	
 	\begin{titlepage}
@@ -61,6 +65,7 @@
 		
 		\HRule \\[0.4cm]
 		{ \huge \bfseries Biometria - Sprawozdanie nr 1}\\[0.4cm] % Title of your document
+		\textsc{\large detekcja ruchu}\\[0.5cm]
 		\HRule \\[1.5cm]
 		
 		%----------------------------------------------------------------------------------------
@@ -82,20 +87,71 @@
 
 	
 	\section{Wstęp}
+	W ćwiczeniu wykonano implementację algorytmu pozwalającego na wyodrębnienie struktury dłoni korzystając z dwóch zdjęć dołączonych do instrukcji ćwiczenia laboratoryjnego. Do tego celu wykorzystano program napisany w języku JAVA.
+		\begin{figure}[h!]
+			\centering
+				\includegraphics[width=1\textwidth]{./img/ruch.jpg}
+			\caption{\label{fig:ruch}Zdjęcie wejściowe (ruch.jpg).}
+		\end{figure}
+				\begin{figure}[h!]
+					\centering
+					\includegraphics[width=1\textwidth]{./img/tlo.jpg}
+					\caption{\label{fig:ruch1}Zdjęcie wejściowe (tlo.jpg).}
+				\end{figure}
+				
+	\section{Opis algorytmu}
+	\label{sec:algorytm}
 	
-	Your introduction goes here! Some examples of commonly used commands and features are listed below, to help you get started.
+	\subsection{Ogólny Schemat}
 	
-	If you have a question, please use the support box in the bottom right of the screen to get in touch. 
+	Poniżej zaprezentowano kolejne operacje, które kolejno przeprowadzono na otrzymanych obrazach (Rysunek \ref{fig:ruch} oraz Rysunek \ref{fig:ruch1} ).
+					\begin{figure}[h!]
+						\centering
+						\includegraphics[width=1\textwidth]{./img/532.jpg}
+						\caption{\label{fig:schemat}Ogólne przedstawienie poszczególnych etapów zaimplementowanego algorytmu.}
+					\end{figure}
+					
 	
-	\section{Some \LaTeX{} Examples}
-	\label{sec:examples}
-	
-	\subsection{Sections}
-	
-	Use section and subsection commands to organize your document. \LaTeX{} handles all the formatting and numbering automatically. Use ref and label commands for cross-references.
-	
-	\subsection{Comments}
-	
+	\subsection{Przejście na skalę szarości}
+	Pierwszym krokiem, zaraz po wczytaniu plików obrazów, była konwersja ich na skalę odcieni szarości. Zostało to zrealizowane za pomocą klasy \texttt{Greyscale.java}.
+
+	     	\begin{lstlisting}[language=Java]
+	     	
+public class Grayscale {
+	BufferedImage out = new BufferedImage(10,10,BufferedImage.TYPE_BYTE_GRAY);
+	public Grayscale(BufferedImage in, String filename){
+	out = new BufferedImage(in.getWidth(), in.getHeight(),
+	BufferedImage.TYPE_BYTE_GRAY);
+	try
+		{
+		Graphics2D g = out.createGraphics();
+		g.drawImage(in, 0, 0, null);
+		HashSet<Integer> colors = new HashSet<>();
+		int color = 0;
+		for (int y = 0; y < out.getHeight(); y++)
+			{
+				for (int x = 0; x < out.getWidth(); x++)
+					{
+						color = out.getRGB(x, y);
+						colors.add(color);
+					}
+			}
+		ImageIO.write(out, "jpeg", new File(filename)); 
+
+		}
+	catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	public BufferedImage getGray(){
+	return out;
+	}
+}
+	     	
+	     	\end{lstlisting}
+	     	
+
 	Comments can be added to the margins of the document using the \todo{Here's a comment in the margin!} todo command, as shown in the example on the right. You can also add inline comments too:
 	
 	\todo[inline, color=green!40]{This is an inline comment.}
